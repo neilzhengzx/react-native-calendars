@@ -26,6 +26,13 @@ class Day extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    const {theme={}} = this.props.theme;
+    if(nextProps && nextProps.theme){
+      const newTheme = { ...theme, ...nextProps.theme };
+      this.style = styleConstructor(newTheme);
+      return true;
+    }
+    
     return ['state', 'children', 'marked', 'onPress', 'markingExists'].reduce((prev, next) => {
       if (prev || nextProps[next] !== this.props[next]) {
         return true;

@@ -33,6 +33,13 @@ class CalendarHeader extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    const {theme={}} = this.props.theme;
+    if(nextProps && nextProps.theme){
+      const newTheme = { ...theme, ...nextProps.theme };
+      this.style = styleConstructor(newTheme);
+      return true;
+    }
+
     if (
       nextProps.month.toString('yyyy MM') !==
       this.props.month.toString('yyyy MM')
