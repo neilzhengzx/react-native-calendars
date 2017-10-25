@@ -92,11 +92,13 @@ LocaleConfig.defaultLocale = 'fr';
   renderArrow={(direction) => (<Arrow />)}
   // Do not show days of other months in month page. Default = false
   hideExtraDays={true}
-  // If hideArrows=false and hideExtraDays=false do not swich month when tapping on greyed out
+  // If hideArrows=false and hideExtraDays=false do not switch month when tapping on greyed out
   // day from another month that is visible in calendar page. Default = false
   disableMonthChange={true}
   // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday.
   firstDay={1}
+  // Hide day names. Default = false
+  hideDayNames={true}
 />
 ```
 
@@ -167,6 +169,7 @@ The loading indicator next to month name will be displayed if `<Calendar />` has
   }}
   // Specify theme properties to override specific styles for calendar parts. Default = {}
   theme={{
+    backgroundColor: '#ffffff',
     calendarBackground: '#ffffff',
     textSectionTitleColor: '#b6c1cd',
     selectedDayBackgroundColor: '#00adf5',
@@ -187,6 +190,31 @@ The loading indicator next to month name will be displayed if `<Calendar />` has
   }}
 />
 ```
+
+#### Advanced styling
+
+If you want to have complete control over calendar styles you can do it by overriding default style.js files. For example, if you want to override calendar header style first you have to find stylesheet id for this file:
+
+https://github.com/wix/react-native-calendars/blob/master/src/calendar/header/style.js#L4
+
+In this case it is 'stylesheet.calendar.header'. Next you can add overriding stylesheet to your theme with this id.
+
+https://github.com/wix/react-native-calendars/blob/master/example/src/screens/calendars.js#L56
+
+```javascript
+theme={{
+  arrowColor: 'white',
+  'stylesheet.calendar.header': {
+    week: {
+      marginTop: 5,
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    }
+  }
+}}
+```
+
+**Disclaimer**: issues that arise because something breaks after using stylesheet override will not be supported. Use this option at your own risk. 
 
 ### CalendarList
 
@@ -240,6 +268,10 @@ An advanced agenda component that can display interactive listings for calendar 
   minDate={'2012-05-10'}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
   maxDate={'2012-05-30'}
+  // Max amount of months allowed to scroll to the past. Default = 50
+  pastScrollRange={50}
+  // Max amount of months allowed to scroll to the future. Default = 50
+  futureScrollRange={50}
   // specify how each item should be rendered in agenda
   renderItem={(item, firstItemInDay) => {return (<View />);}}
   // specify how each date should be rendered. day can be undefined if the item is not first in that day.
@@ -252,6 +284,12 @@ An advanced agenda component that can display interactive listings for calendar 
   rowHasChanged={(r1, r2) => {return r1.text !== r2.text}}
   // Hide knob button. Default = false
   hideKnob={true}
+  // By default, agenda dates are marked if they have at least one item, but you can override this if needed
+  markedDates={{
+    '2012-05-16': {selected: true, marked: true},
+    '2012-05-17': {marked: true},
+    '2012-05-18': {disabled: true}
+  }}
   // agenda theme
   theme={{
     ...calendarTheme,

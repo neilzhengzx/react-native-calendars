@@ -15,6 +15,7 @@ class CalendarHeader extends Component {
     showIndicator: PropTypes.bool,
     firstDay: PropTypes.number,
     renderArrow: PropTypes.func,
+    hideDayNames: PropTypes.bool,
   };
 
   constructor(props) {
@@ -97,11 +98,14 @@ class CalendarHeader extends Component {
           </View>
           {rightArrow}
         </View>
-        <View style={this.style.week}>
-          {weekDaysNames.map((day, idx) => (
-            <Text key={idx} style={this.style.dayHeader}>{day}</Text>
-          ))}
-        </View>
+        {
+          !this.props.hideDayNames &&
+          <View style={this.style.week}>
+            {weekDaysNames.map((day, idx) => (
+              <Text key={idx} style={this.style.dayHeader} numberOfLines={1}>{day}</Text>
+            ))}
+          </View>
+        }
       </View>
     );
   }
