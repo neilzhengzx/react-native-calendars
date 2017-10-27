@@ -16,6 +16,7 @@ import shouldComponentUpdate from './updater';
 
 //Fallback when RN version is < 0.44
 const viewPropTypes = ViewPropTypes || View.propTypes;
+const isEqual = require('lodash').isEqual;
 
 const EmptyArray = [];
 
@@ -83,7 +84,7 @@ class Calendar extends Component {
     this.addMonth = this.addMonth.bind(this);
     this.isSelected = this.isSelected.bind(this);
     this.pressDay = this.pressDay.bind(this);
-    this.shouldComponentUpdate = shouldComponentUpdate;
+    this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -93,6 +94,13 @@ class Calendar extends Component {
         currentMonth: current.clone()
       });
     }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if(!isEqual(this.props, nextProps)){
+      return true;
+    }
+    return false;
   }
 
   updateMonth(day, doNotTriggerListeners) {
