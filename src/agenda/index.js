@@ -98,7 +98,6 @@ export default class AgendaView extends Component {
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onStartDrag = this.onStartDrag.bind(this);
     this.onSnapAfterDrag = this.onSnapAfterDrag.bind(this);
-    this.generateMarkings = this.generateMarkings.bind(this);
     this.knobTracker = new VelocityTracker();
     this.state.scrollY.addListener(({value}) => this.knobTracker.add(value));
   }
@@ -280,20 +279,6 @@ export default class AgendaView extends Component {
     }
   }
 
-  generateMarkings() {
-    let markings = this.props.markedDates;
-    if (!markings) {
-      markings = {};
-      Object.keys(this.props.items  || {}).forEach(key => {
-        if (this.props.items[key] && this.props.items[key].length) {
-          markings[key] = {marked: true};
-        }
-      });
-    }
-    const key = this.state.selectedDay.toString('yyyy-MM-dd');
-    return {...markings, [key]: {...(markings[key] || {}), ...{selected: true}}};
-  }
-
   render() {
     const agendaHeight = Math.max(0, this.viewHeight - HEADER_HEIGHT);
     const weekDaysNames = dateutils.weekDayNames(this.props.firstDay);
@@ -362,8 +347,9 @@ export default class AgendaView extends Component {
               ref={(c) => this.calendar = c}
               minDate={this.props.minDate}
               maxDate={this.props.maxDate}
+              selected={[this.state.selectedDay]}
               current={this.currentMonth}
-              markedDates={this.generateMarkings()}
+              markedDates={this.props.markedDates || this.props.items}
               markingType={this.props.markingType}
               onDayPress={this._chooseDayFromCalendar.bind(this)}
               scrollingEnabled={this.state.calendarScrollable}

@@ -22,8 +22,8 @@ function isLTE(a, b) {
 }
 
 function fromTo(a, b) {
-  const days = [];
-  let from = +a, to = +b;
+  var days = [];
+  var from = +a, to = +b;
   for (; from <= to; from = new XDate(from, true).addDays(1).getTime()) {
     days.push(new XDate(from, true));
   }
@@ -31,11 +31,11 @@ function fromTo(a, b) {
 }
 
 function month(xd) {
-  const year = xd.getFullYear(), month = xd.getMonth();
-  const days = new Date(year, month + 1, 0).getDate();
+  var year = xd.getFullYear(), month = xd.getMonth();
+  var days = new Date(year, month + 1, 0).getDate();
 
-  const firstDay = new XDate(year, month, 1, 0, 0, 0, true);
-  const lastDay = new XDate(year, month, days, 0, 0, 0, true);
+  var firstDay = new XDate(year, month, 1, 0, 0, 0, true);
+  var lastDay = new XDate(year, month, days, 0, 0, 0, true);
 
   return fromTo(firstDay, lastDay);
 }
@@ -50,21 +50,20 @@ function weekDayNames(firstDayOfWeek = 0) {
 }
 
 function page(xd, firstDayOfWeek) {
-  const days = month(xd);
-  let before = [], after = [];
+  var days = month(xd), before = [], after = [];
 
-  const fdow = ((7 + firstDayOfWeek) % 7) || 7;
-  const ldow = (fdow + 6) % 7;
+  var fdow = ((7 + firstDayOfWeek) % 7) || 7;
+  var ldow = (fdow + 6) % 7;
 
   firstDayOfWeek = firstDayOfWeek || 0;
 
-  const from = days[0].clone();
+  var from = days[0].clone();
   if (from.getDay() !== fdow) {
     from.addDays(-(from.getDay() + 7 - fdow) % 7);
   }
 
-  const to = days[days.length - 1].clone();
-  const day = to.getDay();
+  var to = days[days.length - 1].clone();
+  var day = to.getDay();
   if (day !== ldow) {
     to.addDays((ldow + 7 - day) % 7);
   }

@@ -35,7 +35,6 @@ export default class CalendarsScreen extends Component {
             '2012-05-25': {marked: true},
             '2012-05-26': {disabled: true}
           }}
-          // disabledByDefault={true}
           hideArrows={true}
         />
         <Text style={styles.text}>Calendar with marked dates and spinner</Text>
@@ -71,16 +70,6 @@ export default class CalendarsScreen extends Component {
             '2012-05-24': [{startingDay: true, color: 'gray'}],
             '2012-05-25': [{color: 'gray'}],
             '2012-05-26': [{endingDay: true, color: 'gray'}]}}
-          hideArrows={false}
-        />
-        <Calendar
-          style={styles.calendar}
-          current={'2012-05-16'}
-          markingType={'multi-dot'}
-          markedDates={{
-            '2012-05-08': {dots: [{key: 'vacation', color: 'blue', selectedDotColor: 'white'}, {key: 'massage', color: 'red', selectedDotColor: 'white'}], selected: true},
-            '2012-05-09': {dots: [{key: 'vacation', color: 'blue', selectedColor: 'red'}, {key: 'massage', color: 'red', selectedColor: 'blue'}], disabled: true}
-          }}
           hideArrows={false}
         />
       </ScrollView>
