@@ -11,6 +11,7 @@ import {xdateToData, parseDate} from '../interface';
 import styleConstructor from './style';
 import Day from './day/basic';
 import UnitDay from './day/interactive';
+import MultiDotDay from './day/multi-dot';
 import CalendarHeader from './header';
 import shouldComponentUpdate from './updater';
 
@@ -29,9 +30,6 @@ class Calendar extends Component {
 
     // Specify style for calendar container element. Default = {}
     style: viewPropTypes.style,
-
-    selected: PropTypes.array,
-
     // Initially visible month. Default = Date()
     current: PropTypes.any,
     // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
@@ -64,7 +62,9 @@ class Calendar extends Component {
     // Disables changing month when click on days of other months (when hideExtraDays is false). Default = false
     disableMonthChange: PropTypes.bool,
     //Hide day names. Default = false
-    hideDayNames: PropTypes.bool
+    hideDayNames: PropTypes.bool,
+    //Disable days by default. Default = false
+    disabledByDefault: PropTypes.bool
   };
 
   constructor(props) {
@@ -74,7 +74,7 @@ class Calendar extends Component {
     if (props.current) {
       currentMonth = parseDate(props.current);
     } else {
-      currentMonth = props.selected && props.selected[0] ? parseDate(props.selected[0]) : XDate();
+      currentMonth = XDate();
     }
     this.state = {
       currentMonth
@@ -82,7 +82,6 @@ class Calendar extends Component {
 
     this.updateMonth = this.updateMonth.bind(this);
     this.addMonth = this.addMonth.bind(this);
-    this.isSelected = this.isSelected.bind(this);
     this.pressDay = this.pressDay.bind(this);
     this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this);
   }
@@ -96,8 +95,8 @@ class Calendar extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps) {
-    if(!isEqual(this.props, nextProps)){
+   shouldComponentUpdate(nextProps, nextState) {
+    if(!isEqual(this.state, nextState) || !isEqual(this.props, nextProps)){
       return true;
     }
     return false;
@@ -140,25 +139,12 @@ class Calendar extends Component {
     this.updateMonth(this.state.currentMonth.clone().addMonths(count, true));
   }
 
-  isSelected(day) {
-    let selectedDays = [];
-    if (this.props.selected) {
-      selectedDays = this.props.selected;
-    }
-    for (let i = 0; i < selectedDays.length; i++) {
-      if (dateutils.sameDate(day, parseDate(selectedDays[i]))) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   renderDay(day, id) {
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
     let state = '';
-    if (this.isSelected(day)) {
-      state = 'selected';
+    if (this.props.disabledByDefault) {
+      state = 'disabled';
     } else if ((minDate && !dateutils.isGTE(day, minDate)) || (maxDate && !dateutils.isLTE(day, maxDate))) {
       state = 'disabled';
     } else if (!dateutils.sameMonth(day, this.state.currentMonth)) {
@@ -174,23 +160,32 @@ class Calendar extends Component {
         dayComp = (<View key={id} style={{width: 32}}/>);
       }
     } else {
-      const DayComp = this.props.markingType === 'interactive' ? UnitDay : Day;
-      const markingExists = this.props.markedDates ? true : false;
+      const DayComp = this.getDayComponent();
       dayComp = (
         <DayComp
-            key={id}
-            state={state}
-            theme={this.props.theme}
-            onPress={this.pressDay}
-            day={day}
-            marked={this.getDateMarking(day)}
-            markingExists={markingExists}
-          >
-            {day.getDate()}
-          </DayComp>
-        );
+          key={id}
+          state={state}
+          theme={this.props.theme}
+          onPress={this.pressDay}
+          day={day}
+          marked={this.getDateMarking(day)}
+        >
+          {day.getDate()}
+        </DayComp>
+      );
     }
     return dayComp;
+  }
+
+  getDayComponent() {
+    switch (this.props.markingType) {
+    case 'interactive':
+      return UnitDay;
+    case 'multi-dot':
+      return MultiDotDay;
+    default:
+      return Day;
+    }
   }
 
   getDateMarking(day) {
